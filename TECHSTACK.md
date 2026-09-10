@@ -1,4 +1,4 @@
-# TECHSTACK — Chatbot học tiếng Trung (Discord trước, Messenger sau)
+# TECHSTACK — HanziDaily (Discord trước, Messenger sau)
 
 > Tài liệu đi kèm **PLAN.md v3** · Cập nhật: 10/09/2026
 > Phiên bản thư viện lấy từ npm registry ngày 10/09/2026. Mọi version ghi ở đây là **mốc khởi đầu đề xuất**, được pin trong lockfile và nâng cấp theo lịch.
@@ -73,7 +73,7 @@
 
 ### 2.3 Monorepo: pnpm + Turborepo
 ```
-chinese-bot/
+hanzi-daily/
 ├─ apps/
 │  ├─ web/            Next.js 16 — dashboard, /study (P4)
 │  ├─ bot/            NestJS 12 — Discord gateway + dialog + outbound (1 instance)
@@ -146,7 +146,7 @@ Chạy trong CI. Vi phạm thì fail build.
 | Components | **Components V2** (Container, Text Display, Section, Media Gallery, Action Row, Button, String Select) + Modal (Text Input, File Upload) |
 | Phản hồi | Lệnh nặng thì `deferReply({ flags: Ephemeral })` trong ≤ 3 giây, rồi `editReply`/`followUp` |
 | Sharding | 1 shard (discord.js tự quản lý). Chỉ cần tính lại khi vào hàng nghìn server |
-| Môi trường | **2 Discord Application riêng**: `ChineseBot-Staging` (server test) và `ChineseBot` (prod). Token tách biệt |
+| Môi trường | **2 Discord Application riêng**: `HanziDaily Staging` (server test) và `HanziDaily` (prod). Token tách biệt |
 
 ### 4.3 Luồng xử lý 1 interaction
 ```
@@ -351,10 +351,10 @@ flowchart LR
 ```yaml
 services:
   caddy:   { image: caddy:2, ports: ["80:80","443:443"], volumes: ["./Caddyfile:/etc/caddy/Caddyfile", "caddy_data:/data"] }
-  web:     { image: ghcr.io/<org>/chinese-bot-web:${TAG}, env_file: .env, depends_on: [postgres, redis] }
-  bot:     { image: ghcr.io/<org>/chinese-bot-bot:${TAG}, env_file: .env, deploy: { replicas: 1 } }
-  worker:  { image: ghcr.io/<org>/chinese-bot-worker:${TAG}, env_file: .env, deploy: { replicas: 1 } }
-  migrate: { image: ghcr.io/<org>/chinese-bot-worker:${TAG}, command: ["pnpm","db:migrate:deploy"], profiles: ["ops"] }
+  web:     { image: ghcr.io/<org>/hanzi-daily-web:${TAG}, env_file: .env, depends_on: [postgres, redis] }
+  bot:     { image: ghcr.io/<org>/hanzi-daily-bot:${TAG}, env_file: .env, deploy: { replicas: 1 } }
+  worker:  { image: ghcr.io/<org>/hanzi-daily-worker:${TAG}, env_file: .env, deploy: { replicas: 1 } }
+  migrate: { image: ghcr.io/<org>/hanzi-daily-worker:${TAG}, command: ["pnpm","db:migrate:deploy"], profiles: ["ops"] }
   postgres:
     image: postgres:18
     volumes: ["pg_data:/var/lib/postgresql"]
@@ -449,8 +449,8 @@ META_APP_ID, META_APP_SECRET, META_VERIFY_TOKEN, META_GRAPH_VERSION, FACEBOOK_CL
 
 ```bash
 # 1. Khởi tạo
-pnpm dlx create-turbo@latest chinese-bot --package-manager pnpm
-cd chinese-bot && pnpm add -Dw @biomejs/biome dependency-cruiser typescript@~6.0 vitest
+pnpm dlx create-turbo@latest hanzi-daily --package-manager pnpm
+cd hanzi-daily && pnpm add -Dw @biomejs/biome dependency-cruiser typescript@~6.0 vitest
 
 # 2. Apps
 pnpm dlx create-next-app@16 apps/web --ts --tailwind --app --src-dir --use-pnpm
@@ -462,9 +462,9 @@ pnpm --filter bot add discord.js@^14.27 @nestjs/bullmq bullmq ioredis nestjs-pin
 pnpm --filter worker add @nestjs/bullmq bullmq ioredis unpdf mammoth papaparse sharp file-type \
   ai @ai-sdk/anthropic @ai-sdk/google microsoft-cognitiveservices-speech-sdk @aws-sdk/client-s3
 pnpm --filter web add better-auth @tanstack/react-query @tanstack/react-table react-hook-form zod nuqs
-pnpm --filter @app/db add @prisma/client@^7.10 @prisma/adapter-pg pg && pnpm --filter @app/db add -D prisma@^7.10
-pnpm --filter @app/core add ts-fsrs date-fns @date-fns/tz zod
-pnpm --filter @app/zh add pinyin-pro
+pnpm --filter @hanzi-daily/db add @prisma/client@^7.10 @prisma/adapter-pg pg && pnpm --filter @hanzi-daily/db add -D prisma@^7.10
+pnpm --filter @hanzi-daily/core add ts-fsrs date-fns @date-fns/tz zod
+pnpm --filter @hanzi-daily/zh add pinyin-pro
 
 # 4. Hạ tầng local
 docker compose -f infra/docker-compose.dev.yml up -d   # postgres:18, redis:8

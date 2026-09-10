@@ -1,7 +1,8 @@
-# PLAN v3 — Chatbot học tiếng Trung: Discord trước, Messenger sau
+# PLAN v3 — HanziDaily: Chatbot học tiếng Trung (Discord trước, Messenger sau)
 
 > Phiên bản: **3.0 (Discord-first, kiến trúc đa kênh)** · Ngày: 10/09/2026
 > Quy mô: MVP < 1.000 người dùng/tháng · Techstack: Node.js / TypeScript · Team giả định: 2 dev fullstack
+> Tên dự án: **HanziDaily** · Repo: `hanzi-daily` · Package scope: `@hanzi-daily/*`
 > Tham khảo ý tưởng: [ViqiumAI](https://github.com/quocbahuynh/ViqiumAI)
 > Lịch sử: v1 (Messenger + Fanpage) → v2 (review tính khả thi) → **v3 (làm Discord trước, thiết kế sẵn để thêm Messenger)**
 
@@ -226,7 +227,7 @@ interface ChannelAdapter {
 ### 4.4 Cấu trúc thư mục
 
 ```
-chinese-bot/
+hanzi-daily/
 ├─ apps/
 │  ├─ web/                    # Next.js dashboard (+ /study ở Phase 4)
 │  └─ bot/                    # NestJS: nạp các adapter, workers, scheduler
